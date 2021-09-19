@@ -3,7 +3,7 @@ import random
 import math
 import sys
 
-def text_seed_to_integer (seed):
+def text_seed_to_integer(seed):
     """Turn a string into a unique integer value. Used for seeds as the random library does not support string seeds
 
     Args:
@@ -44,6 +44,11 @@ def shuffle_seed(seed):
     # print(seed)
 
 def generate_rgb_tuple():
+    """create 3 unique integers between 0 and 255, shuffling the seed each time
+
+    Returns:
+        tuple: an RGB value to use in PIL
+    """
     final_array = []
     for i in range(3):
         color_x = random.randint(0, 256)
@@ -54,6 +59,11 @@ def generate_rgb_tuple():
     return (final_array[0], final_array[1], final_array[2])
 
 def generate_image_from_seed(image):
+    """method that places a pseudo-random color in every pixel based on the seed. The seed is shuffled again after every pixel placement.
+
+    Args:
+        image (PIL.Image): a PIL image
+    """
     for pixel_x in range(image.width):
         for pixel_y in range(image.height):
             color = generate_rgb_tuple()
