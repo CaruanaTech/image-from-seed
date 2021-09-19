@@ -2,6 +2,8 @@ from PIL import Image
 import random
 import math
 import sys
+import traceback
+from tqdm import tqdm
 
 def text_seed_to_integer(seed):
     """Turn a string into a unique integer value. Used for seeds as the random library does not support string seeds
@@ -64,7 +66,7 @@ def generate_image_from_seed(image):
     Args:
         image (PIL.Image): a PIL image
     """
-    for pixel_x in range(image.width):
+    for pixel_x in tqdm(range(image.width)):
         for pixel_y in range(image.height):
             color = generate_rgb_tuple()
             # print(f"placing {color} @ {pixel_x},{pixel_y}")
@@ -72,15 +74,29 @@ def generate_image_from_seed(image):
             shuffle_seed(seed)
 
 if __name__ == "__main__":
-    seed = input("Seed: ")
-    if not isinstance(seed, int):
-        seed = text_seed_to_integer(seed)
-        print("seed is not an integer, converted to: {}".format(seed))
+    try:
+        max_x = int(input("Image X value: "))
+        max_y = int(input("Image Y value: "))
+        
+        seed = input("Seed: ")
+        try:
+            seed = int(seed)
+        except ValueError:    
+            seed = text_seed_to_integer(seed)
+            print("seed is not an integer, converted to: {}".format(seed))
+        random.seed(seed)
 
-    random.seed(seed)
-    # now that the first seed has been set,
-    # make sure the seed is in a shuffle-able format
-    print("generating image with seed {}".format(seed))
-    image = create_image(16, 16)
-    generate_image_from_seed(image)
-    image.save(f"output/{seed}.jpg")
+        print("generating image with seed {}".format(seed))
+        
+        image = create_image(max_x, max_y)
+        generate_image_from_seed(image)
+        
+        print("Going to save image...")
+        image.save(f"output/{seed}.jpg")
+        print("Done!")
+        sys.exit(0)
+    
+    except Exception:
+        print("encountered an exception while running")
+        traceback.print_exc()
+        sys.exit(1)
